@@ -34,7 +34,7 @@ mixture // helium
     }
     thermodynamics
     {
-        Cp          1005;
+        Cp          5193;
         Hf          0;
     }
     transport
