@@ -68,20 +68,7 @@ int main(int argc, char *argv[])
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    OFstream os("mflow");
-    os << "time" 
-        << "\t" << "mflowInlet" 
-        << "\t" << "mflowOutlet"         
-	<< flush
-	<< endl;
-
-    Info<< "\nStarting time loop\n" << endl;
-
-    label inletId = mesh.boundaryMesh().findPatchID("INLET");
-    label outletId = mesh.boundaryMesh().findPatchID("OUTLET");
-
-    vectorField inletSf = mesh.Sf().boundaryField()[inletId];
-    vectorField outletSf = mesh.Sf().boundaryField()[outletId];        
+    Info<< "\nStarting time loop\n" << endl;     
 
     while (simple.loop())
     {
@@ -111,34 +98,7 @@ int main(int argc, char *argv[])
         
         phiMd = fvc::interpolate(md) & mesh.Sf();
 
-        #include "contErr.H"                 
-        
-        vectorField UtIn = Ut.boundaryField()[inletId];
-        vectorField UtOut = Ut.boundaryField()[outletId];        
-        scalarField rhoIn = rho.boundaryField()[inletId];
-        scalarField rhoOut = rho.boundaryField()[outletId];
-
-        scalarField mflowInf = (rhoIn * UtIn) & inletSf;
-        scalarField mflowOutf = (rhoOut * UtOut) & outletSf;
-
-        scalar mflowIn = gSum(mflowInf);
-        scalar mflowOut = gSum(mflowOutf);        
-
-        os << runTime.time().value()
-        << "\t"  << fabs(mflowIn)
-        << "\t"  << fabs(mflowOut)
-        << flush << endl; 
-
-        //surfaceScalarField phiT = phi + phiMd;
-        //mflowInf = phiT.boundaryField()[inletId];
-        //mflowOutf = phiT.boundaryField()[outletId];
-
-        //mflowIn = gSum(mflowInf);
-        //mflowOut = gSum(mflowOutf); 
-
-        //os << "\t"  << fabs(mflowIn)
-        //<< "\t"  << fabs(mflowOut)
-        //<< flush << endl;
+        #include "contErr.H"
 
         runTime.write();
 

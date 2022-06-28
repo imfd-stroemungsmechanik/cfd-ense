@@ -46,14 +46,50 @@ timePrecision   6;
 runTimeModifiable true;
 
 functions
-{    
-    //#includeFunc "stressComponents"
-    //#includeFunc "pressureCoefficient"
-    //#includeFunc "sample"
-    //#includeFunc "sampleCp"
-    //#includeFunc "writeCellCentres"
-    //#includeFunc "wallShearStress"  
-} 
+{
+    // Patch average at specified patch
+    massflowInlet
+    {
+        type                    surfaceFieldValue;
+        libs                    ("libfieldFunctionObjects.so");
 
+        log                     false;
+        writeFields             false;
+
+        regionType              patch;
+        name                    INLET;
+
+        operation               weightedAreaIntegrate;
+        postOperation           mag;
+        weightField             rho;
+
+        fields
+        (
+            Ut
+        );
+    }
+
+    // Patch average at specified patch
+    massflowOutlet
+    {
+        type                    surfaceFieldValue;
+        libs                    ("libfieldFunctionObjects.so");
+
+        log                     false;
+        writeFields             false;
+
+        regionType              patch;
+        name                    OUTLET;
+
+        operation               weightedAreaIntegrate;
+        postOperation           mag;
+        weightField             rho;
+
+        fields
+        (
+            Ut
+        );
+    }
+}
 
 // ************************************************************************* //
