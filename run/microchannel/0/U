@@ -1,0 +1,124 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2006                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0.1 0 0);
+
+boundaryField
+{
+    INLET 
+    { 
+        type    zeroGradient;
+        //type       directionMixed; 
+        //refValue   uniform (0 0 0); 
+        //refGradient   uniform (0 0 0); 
+        //valueFraction  uniform (0 0 0 1 0 1); 
+        //value     uniform (0 0 0); 
+    } 
+    //inlet
+    //{  
+    //    //type    zeroGradient;
+    //    //type    flowRateInletVelocity;
+    //    //massFlowRate 1.314;   
+    //   //type zeroGradient;
+    //     type    fixedValue;
+    //    value uniform (5 0 0);
+    //    //type            zeroGradient;
+    //    //value uniform (0 0 0);
+    //}
+
+    OUTLET
+    { 
+        type    inletOutlet;
+        //tangentialVelocity uniform 0;
+        inletValue   uniform (0 0 0);
+        //type       directionMixed; 
+        //refValue   uniform (0 0 0); 
+        //refGradient   uniform (0 0 0); 
+        //valueFraction  uniform (0 0 0 1 0 1); 
+        //value     uniform (0 0 0); 
+    } 
+
+
+    top{
+        type noSlip;
+        //value uniform (0 0 0);
+    }
+
+    
+/*
+    top
+    {
+    type            codedFixedValue;
+    value           uniform (0 0 0);
+
+    // Name of generated boundary condition
+    name    customSlip;
+
+    code
+    #{
+        const volScalarField& p_ = this->db().lookupObject<volScalarField>("p");
+        const volScalarField& rho_ = this->db().lookupObject<volScalarField>("rho");
+        const volVectorField grad_p_ = fvc::grad(p_);
+        label patchID = this->patch().boundaryMesh().findPatchID("top");
+        scalarField pBdry = p_.boundaryField()[patchID];
+        scalarField rhoBdry = rho_.boundaryField()[patchID];
+        vectorField snGradPBdry= p_.boundaryField()[patchID].snGrad()() * this->patch().nf();
+        vectorField gradPBdry = grad_p_.boundaryField()[patchID];
+        //const dictionary& transportProperties = this->db().lookupObject<IOdictionary>
+        //(
+        // "transportProperties"
+        //);       
+        
+        //forAll(pBdry,faceI)
+        //{
+        //    test[faceI] =  - 1.99e-05/pBdry[faceI] * (gradPBdry[faceI] - snGradPBdry[faceI]);
+        //}
+        //const dimensionedScalar nu(transportProperties.lookup("nu"));
+        //operator==(gradPBdry - snGradPBdry);
+        operator==(- 1.99e-05/(rhoBdry*pBdry) *(gradPBdry - snGradPBdry)); 
+        //Info << test.size() << endl;
+        //Info << pBdry.size() << endl; 
+        //Info << p_.boundaryField()[patchID].snGrad()().size() <<endl;      
+    #};
+
+    codeInclude
+#{
+    #include "fvCFD.H"
+#};
+
+codeOptions
+#{
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude
+#};
+
+}
+*/
+
+    bottom
+    {
+        type            symmetryPlane;
+    }
+
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //

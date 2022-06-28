@@ -1,0 +1,111 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2006                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      p;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 291534;
+
+boundaryField
+{
+    INLET
+    {
+    type            codedFixedValue;
+    value           uniform 676358.88;
+
+    // Name of generated boundary condition
+    name    bwdPInlet;
+
+    code
+    #{        
+        const label patchID = this->patch().boundaryMesh().findPatchID("OUTLET");
+
+        const volScalarField& p_ = this->db().lookupObject<volScalarField>("p");
+        const scalarField pBdry = p_.boundaryField()[patchID];
+
+        const scalar pAvg = gAverage(pBdry);
+        
+        operator==(2.32*pAvg); 
+         
+    #};
+
+    codeInclude
+#{
+    #include "fvCFD.H"
+#};
+
+codeOptions
+#{
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude
+#};
+
+}
+    
+
+    OUTLET
+        {
+    type            codedFixedValue;
+    value           uniform 291534;
+
+    // Name of generated boundary condition
+    name    bwdPOutlet;
+
+    code
+    #{
+        const scalar kb = 1.38e-23;
+        const scalar kn = 0.018;
+        const scalar sigma = 3.77e-10;
+
+        const label patchID = this->patch().boundaryMesh().findPatchID("OUTLET");
+
+        const volScalarField& T_ = this->db().lookupObject<volScalarField>("T");
+
+        const scalarField TBdry = T_.boundaryField()[patchID];
+
+        const scalar Tavg = gAverage(TBdry);
+        //Info << Tavg <<endl;
+        const scalar val = kb*Tavg/(sqrt(2.) * 3.14 * sigma * sigma * kn * 1.25e-6);       
+        //Info << val <<endl;
+        operator==(val); 
+         
+    #};
+
+    codeInclude
+#{
+    #include "fvCFD.H"
+#};
+
+codeOptions
+#{
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude
+#};
+
+}
+
+    WALL
+    {
+        type            zeroGradient;
+    }
+
+    SYMMETRY
+    {
+        type            symmetry;
+    }
+
+}
+
+// ************************************************************************* //
