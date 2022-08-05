@@ -44,6 +44,9 @@ Description
 #include "OFstream.H"
 #include "IOmanip.H" 
 
+#include "maxwellSlipUFvPatchVectorField.H"
+#include "smoluchowskiJumpTFvPatchScalarField.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
