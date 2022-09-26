@@ -84,14 +84,14 @@ int main(int argc, char *argv[])
 
         mdT = thermo.mu() * 1/(2*thermo.T()) * fvc::grad(thermo.T()); 
         #include "correctMdTBC.H"
-        //if (simple.consistent())
-        //{
+        if (simple.consistent())
+        {
         #include "pcEqn.H"
-        //}
-        //else
-        //{
-        //    #include "pEqn.H"
-        //}
+        }
+        else
+        {
+            #include "pEqn.H"
+        }
 
         turbulence->correct();
         mdp = -thermo.mu() * (1/p * fvc::grad(p));
