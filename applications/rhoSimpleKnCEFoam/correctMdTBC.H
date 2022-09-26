@@ -5,10 +5,12 @@
     {
         if(patches[patchi].type() == "wall")
         {
-            const vectorField pNf = mdT.boundaryField()[patchi].patch().nf(); 
+            const fvPatchVectorField& patchField = mdT.boundaryField()[patchi];
+
+            const vectorField pNf = patchField.patch().nf(); 
             vectorField& mdTwall = mdT.boundaryFieldRef()[patchi];
 
-            mdTwall -= ((mdT.boundaryField()[patchi] & pNf) * pNf);        
+            mdTwall -= ((patchField & pNf) * pNf);        
         }
-    }    
+    }
 }
