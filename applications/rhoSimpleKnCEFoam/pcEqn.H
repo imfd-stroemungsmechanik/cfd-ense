@@ -69,7 +69,7 @@ if (simple.transonic())
         if (simple.finalNonOrthogonalIter())
         {
             phi = phiHbyA + cpEqn.flux();
-            //phiMd = phiMdT + epEqn.flux();
+            phiMd = phiMdT + epEqn.flux();
         }
     }
 }
@@ -107,7 +107,7 @@ else
         if (simple.finalNonOrthogonalIter())
         {
             phi = phiHbyA + cpEqn.flux();
-            //phiMd = phiMdT + epEqn.flux();
+            phiMd = phiMdT + epEqn.flux();
         }
     }
 }

@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
         Ud = md/rho;
         Ut = U + Ud;
         
-        phiMd = fvc::interpolate(md) & mesh.Sf();
+        //phiMd = fvc::interpolate(md) & mesh.Sf();
 
         #include "contErr.H"
 
