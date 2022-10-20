@@ -11,12 +11,9 @@ MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
 // Update the pressure BCs to ensure flux consistency
 constrainPressure(p, rho, U, phiHbyA, rhorAUf, MRF);
 
-surfaceScalarField mdpPref = fvc::interpolate(-thermo.mu()/p);
-surfaceScalarField phiMdT = fvc::flux(mdT);
-
 fvScalarMatrix epEqn
 (
-    fvm::laplacian(mdpPref, p)
+    fvm::laplacian(-thermo.mu()/p, p)
   + fvc::div(phiMdT)
 );  
 
@@ -61,7 +58,7 @@ if (simple.transonic())
         if (simple.finalNonOrthogonalIter())
         {
             phi = phiHbyA + cpEqn.flux();
-            //phiMd = phiMdT + epEqn.flux();
+            phiMdp = epEqn.flux();
         }
     }
 }
@@ -99,7 +96,7 @@ else
         if (simple.finalNonOrthogonalIter())
         {
             phi = phiHbyA + cpEqn.flux();
-            //phiMd = phiMdT + epEqn.flux();
+            phiMdp = epEqn.flux();
         }
     }
 }
