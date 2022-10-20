@@ -24,13 +24,14 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    rhoSimpleFoam
+    enseFoam
 
 Group
     grpCompressibleSolvers
 
 Description
-    Steady-state solver for compressible turbulent flow.
+    Steady-state solver for laminar flow of compressible, ideal gases    
+    Solves the extended Navier-Stokes equations (ENSE) by Durst et al.
 
 \*---------------------------------------------------------------------------*/
 
@@ -41,9 +42,6 @@ Description
 #include "pressureControl.H"
 #include "fvOptions.H"
 
-#include "OFstream.H"
-#include "IOmanip.H" 
-
 #include "maxwellSlipUFvPatchVectorField.H"
 #include "smoluchowskiJumpTFvPatchScalarField.H"
 
@@ -53,7 +51,8 @@ int main(int argc, char *argv[])
 {
     argList::addNote
     (
-        "Steady-state solver for compressible turbulent flow."
+        "Steady-state solver for laminar flow of compressible, ideal gases."
+        "Solves the extended Navier-Stokes equations (ENSE) by Durst et al."
     );
 
     #include "postProcess.H"
