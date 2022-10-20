@@ -30,7 +30,7 @@ Group
     grpCompressibleSolvers
 
 Description
-    Steady-state solver for laminar flow of compressible, ideal gases    
+    Steady-state solver for laminar flow of compressible, ideal gases.    
     Solves the extended Navier-Stokes equations (ENSE) by Durst et al.
 
 \*---------------------------------------------------------------------------*/
@@ -79,26 +79,27 @@ int main(int argc, char *argv[])
         // Pressure-velocity SIMPLE corrector
         #include "UEqn.H"       
 
-        #include "EEqn.H"
+        #include "EEqn.H"           
 
-        mdT = thermo.mu() * 1/(2*thermo.T()) * fvc::grad(thermo.T()); 
-        #include "correctMdTBC.H"
         if (simple.consistent())
         {
-        #include "pcEqn.H"
+            #include "pcEqn.H"
         }
         else
         {
             #include "pEqn.H"
         }
+        phiMd = phiMdT + phiMdp;
 
         turbulence->correct();
+
+        mdT = thermo.mu() * 1/(2*thermo.T()) * fvc::grad(thermo.T()); 
+        #include "constrainMdT.H"
         mdp = -thermo.mu() * (1/p * fvc::grad(p));
         md = mdp + mdT;
         Ud = md/rho;
         Ut = U + Ud;
         
-        phiMd = fvc::interpolate(md) & mesh.Sf();
 
         #include "contErr.H"
 

@@ -1,8 +1,6 @@
     // Solve the Momentum equation
-//#include <typeInfo.H>
-    MRF.correctBoundaryVelocity(U);
-    
-    volTensorField ext = (md * U) - 2 * sph(md * U); 
+
+    MRF.correctBoundaryVelocity(U);   
 
     tmp<fvVectorMatrix> tUEqn
     (
@@ -11,7 +9,7 @@
       + turbulence->divDevRhoReff(U)
 
       + fvm::div(phiMd, U)
-      + fvc::div(ext)
+      + fvc::div(dev2(md*U))
      ==
         fvOptions(rho, U)
     );

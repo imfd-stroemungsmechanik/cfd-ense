@@ -1,3 +1,4 @@
+// Constrain face normal component of mdT to zero on wall boundaries
 {
     const polyBoundaryMesh& patches = mesh.boundaryMesh();
 

@@ -5,7 +5,9 @@ autoPtr<fluidThermo> pThermo
     fluidThermo::New(mesh)
 );
 fluidThermo& thermo = pThermo();
-thermo.validate(args.executable(), "h", "e");
+thermo.validate(args.executable(), "e");
+
+mesh.setFluxRequired("e");
 
 volScalarField& p = thermo.p();
 
@@ -22,6 +24,7 @@ volScalarField rho
     thermo.rho()
 );
 
+// Convective velocity
 Info<< "Reading field U\n" << endl;
 volVectorField U
 (
@@ -59,6 +62,7 @@ dimensionedScalar initialMass = fvc::domainIntegrate(rho);
 #include "createMRF.H"
 #include "createFvOptions.H"
 
+// Soret diffusion 
 volVectorField mdT
 (
     IOobject
@@ -71,8 +75,10 @@ volVectorField mdT
     ),
     thermo.mu() * 1/(2*thermo.T()) * fvc::grad(thermo.T())
 );
-#include "correctMdTBC.H"
+#include "constrainMdT.H"
 
+
+// Fick diffusion
 volVectorField mdp
 (
     IOobject
@@ -86,6 +92,8 @@ volVectorField mdp
     -thermo.mu() * (1/p * fvc::grad(p))
 );
 
+
+// Entire self-diffusion
 volVectorField md
 (
     IOobject
@@ -96,9 +104,11 @@ volVectorField md
         IOobject::NO_READ,
         IOobject::AUTO_WRITE
     ),   
-    mdT + mdp//dimensionedVector("md", dimensionSet(1,-2,-1,0,0,0,0), Foam::vector(0,0,0))
+    mdT + mdp
 );
 
+
+// Diffusive velocity
 volVectorField Ud
 (
     IOobject
@@ -112,6 +122,7 @@ volVectorField Ud
     md/rho
 );
 
+// Total velocity 
 volVectorField Ut
 (
     IOobject
@@ -125,7 +136,10 @@ volVectorField Ut
     U + Ud
 );
 
-surfaceScalarField phiMd = fvc::interpolate(md) & mesh.Sf();
+// Diffusive face-flux fields
+surfaceScalarField phiMdT = fvc::flux(mdT);
+surfaceScalarField phiMdp = fvc::flux(mdp);
+surfaceScalarField phiMd = phiMdT + phiMdp;
 
 volScalarField massRes
 (
@@ -137,5 +151,5 @@ volScalarField massRes
         IOobject::NO_READ,
         IOobject::AUTO_WRITE
     ),
-    fvc::div(phi) + fvc::div(phiMd)
+    fvc::div(phi + phiMd)
 );
