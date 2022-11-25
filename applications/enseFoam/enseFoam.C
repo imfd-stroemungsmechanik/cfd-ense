@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
         {
             #include "pEqn.H"
         }
+        // Update diffusive face-flux field
         phiMd = phiMdT + phiMdp;
 
         turbulence->correct();

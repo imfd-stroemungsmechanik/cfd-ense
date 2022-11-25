@@ -11,11 +11,12 @@ MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
 // Update the pressure BCs to ensure flux consistency
 constrainPressure(p, rho, U, phiHbyA, rhorAUf, MRF);
 
+// Assemble second part of continuity equation from new ENSE terms
 fvScalarMatrix epEqn
 (
     fvm::laplacian(-thermo.mu()/p, p)
   + fvc::div(phiMdT)
-);  
+);
 
 if (simple.transonic())
 {
@@ -29,6 +30,7 @@ if (simple.transonic())
 
     while (simple.correctNonOrthogonal())
     {
+        // Assemble CNSE part of pressure equation
         fvScalarMatrix cpEqn
         (
             fvc::div(phiHbyA)
@@ -38,6 +40,7 @@ if (simple.transonic())
             fvOptions(psi, p, rho.name())
         );
 
+        // Combine both pressure equation assemblies
         fvScalarMatrix pEqn
         (
             cpEqn
@@ -68,6 +71,7 @@ else
 
     while (simple.correctNonOrthogonal())
     {
+        // Assemble CNSE part of pressure equation
         fvScalarMatrix cpEqn
         (
             fvc::div(phiHbyA)
@@ -76,14 +80,12 @@ else
             fvOptions(psi, p, rho.name())
         );
 
+        // Combine both pressure equation assemblies
         fvScalarMatrix pEqn
         (
             cpEqn
           + epEqn
-        );
-
-        // Relax the pressure equation to maintain diagonal dominance
-        pEqn.relax();
+        );        
 
         pEqn.setReference
         (

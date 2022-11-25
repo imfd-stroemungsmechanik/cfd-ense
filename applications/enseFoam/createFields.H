@@ -86,7 +86,7 @@ if(!isothermal)
 }
 
 
-// Fick diffusion
+// Fick's diffusion term
 volVectorField mdp
 (
     IOobject

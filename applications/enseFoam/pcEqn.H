@@ -15,6 +15,7 @@ volScalarField rhorAtU("rhorAtU", rho*rAtU);
 // Update the pressure BCs to ensure flux consistency
 constrainPressure(p, rho, U, phiHbyA, rhorAtU, MRF);
 
+// Assemble second part of continuity equation from new ENSE terms
 fvScalarMatrix epEqn
 (
     fvm::laplacian(-thermo.mu()/p, p)
@@ -37,6 +38,7 @@ if (simple.transonic())
 
     while (simple.correctNonOrthogonal())
     {
+        // Assemble CNSE part of pressure equation
         fvScalarMatrix cpEqn
         (
             fvc::div(phiHbyA)
@@ -46,6 +48,7 @@ if (simple.transonic())
             fvOptions(psi, p, rho.name())
         );           
 
+        // Combine both pressure equation assemblies
         fvScalarMatrix pEqn
         (
             cpEqn
@@ -79,6 +82,7 @@ else
 
     while (simple.correctNonOrthogonal())
     {
+        // Assemble CNSE part of pressure equation
         fvScalarMatrix cpEqn
         (
             fvc::div(phiHbyA)
@@ -87,6 +91,7 @@ else
             fvOptions(psi, p, rho.name())
         );
 
+        // Combine both pressure equation assemblies
         fvScalarMatrix pEqn
         (
             cpEqn
