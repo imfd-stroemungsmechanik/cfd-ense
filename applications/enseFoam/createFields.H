@@ -62,7 +62,9 @@ dimensionedScalar initialMass = fvc::domainIntegrate(rho);
 #include "createMRF.H"
 #include "createFvOptions.H"
 
-// Soret diffusion 
+bool isothermal = simple.dict().getOrDefault("isothermal", false);
+
+// Soret's diffusion term
 volVectorField mdT
 (
     IOobject
@@ -73,9 +75,15 @@ volVectorField mdT
         IOobject::NO_READ,
         IOobject::AUTO_WRITE
     ),
-    thermo.mu() * 1/(2*thermo.T()) * fvc::grad(thermo.T())
-);
-#include "constrainMdT.H"
+    mesh,
+    dimensionedVector("mdT", dimensionSet(1,-2,-1,0,0,0,0), Foam::vector(0,0,0))
+); 
+
+if(!isothermal)
+{
+    mdT = thermo.mu() * 1/(2*thermo.T()) * fvc::grad(thermo.T());   
+    #include "constrainMdT.H"
+}
 
 
 // Fick diffusion

@@ -79,7 +79,10 @@ int main(int argc, char *argv[])
         // Pressure-velocity SIMPLE corrector
         #include "UEqn.H"       
 
-        #include "EEqn.H"           
+        if (!isothermal)
+        {
+            #include "EEqn.H"           
+        }        
 
         if (simple.consistent())
         {
@@ -93,8 +96,11 @@ int main(int argc, char *argv[])
 
         turbulence->correct();
 
-        mdT = thermo.mu() * 1/(2*thermo.T()) * fvc::grad(thermo.T()); 
-        #include "constrainMdT.H"
+        if(!isothermal)
+        {
+            mdT = thermo.mu() * 1/(2*thermo.T()) * fvc::grad(thermo.T()); 
+            #include "constrainMdT.H"
+        }
         mdp = -thermo.mu() * (1/p * fvc::grad(p));
         md = mdp + mdT;
         Ud = md/rho;
