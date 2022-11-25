@@ -1,6 +1,6 @@
 {
 
-massRes = fvc::div(phi) + fvc::div(phiMd); 
+massRes = fvc::div(phi + phiMd); 
 
 scalar sumLocalmassRes = runTime.deltaTValue()*mag(massRes)().weightedAverage(mesh.V()).value();
 scalar globalmassRes = runTime.deltaTValue()*massRes.weightedAverage(mesh.V()).value();
