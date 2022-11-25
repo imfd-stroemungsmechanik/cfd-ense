@@ -26,12 +26,11 @@ License
 Application
     enseFoam
 
-Group
-    grpCompressibleSolvers
-
 Description
-    Steady-state solver for laminar flow of compressible, ideal gases.    
-    Solves the extended Navier-Stokes equations (ENSE) by Durst et al.
+    Pressure-based, steady-state and sequential solver for the compressible
+    flow of gases. Solves the extended Navier-Stokes equations
+    (ENSE) by Durst et al. to include mass diffusion for the simulation of
+    flows with high Knudsen numbers.
 
 \*---------------------------------------------------------------------------*/
 
@@ -51,7 +50,7 @@ int main(int argc, char *argv[])
 {
     argList::addNote
     (
-        "Steady-state solver for laminar flow of compressible, ideal gases."
+        "Steady-state solver for the compressible flow of gases."
         "Solves the extended Navier-Stokes equations (ENSE) by Durst et al."
     );
 
