@@ -1,3 +1,0 @@
-enseFoam.C
-
-EXE = $(FOAM_APPBIN)/enseFoam

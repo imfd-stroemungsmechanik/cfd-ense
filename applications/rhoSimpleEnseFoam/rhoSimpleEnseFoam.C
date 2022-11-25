@@ -24,7 +24,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    enseFoam
+    rhoSimpleEnseFoam
 
 Description
     Pressure-based, steady-state and sequential solver for the compressible
