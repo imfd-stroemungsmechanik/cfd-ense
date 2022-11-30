@@ -11,13 +11,6 @@ MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
 // Update the pressure BCs to ensure flux consistency
 constrainPressure(p, rho, U, phiHbyA, rhorAUf, MRF);
 
-// Assemble second part of continuity equation from new ENSE terms
-fvScalarMatrix epEqn
-(
-    fvm::laplacian(-thermo.mu()/p, p)
-  + fvc::div(phiMdT)
-);
-
 if (simple.transonic())
 {
     surfaceScalarField phid
@@ -38,6 +31,13 @@ if (simple.transonic())
           - fvm::laplacian(rhorAUf, p)          
           ==
             fvOptions(psi, p, rho.name())
+        );
+
+        // Assemble second part of continuity equation from new ENSE terms
+        fvScalarMatrix epEqn
+        (
+            fvm::laplacian(-thermo.mu()/p, p)
+          + fvc::div(phiMdT)
         );
 
         // Combine both pressure equation assemblies
@@ -78,6 +78,13 @@ else
           - fvm::laplacian(rhorAUf, p)         
           ==
             fvOptions(psi, p, rho.name())
+        );
+
+        // Assemble second part of continuity equation from new ENSE terms
+        fvScalarMatrix epEqn
+        (
+            fvm::laplacian(-thermo.mu()/p, p)
+          + fvc::div(phiMdT)
         );
 
         // Combine both pressure equation assemblies
