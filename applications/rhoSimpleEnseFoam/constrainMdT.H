@@ -11,7 +11,7 @@
             const vectorField pNf = patchField.patch().nf(); 
             vectorField& mdTwall = mdT.boundaryFieldRef()[patchi];
 
-            mdTwall -= ((patchField & pNf) * pNf);        
+            mdTwall -= ((patchField & pNf) * pNf);
         }
     }
 }
