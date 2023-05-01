@@ -2,7 +2,7 @@ rho = thermo.rho();
 
 volScalarField rAU(1.0/UEqn.A());
 volScalarField rAtU(1.0/(1.0/rAU - UEqn.H1()));
-volVectorField HbyA(constrainHbyA(rAU*UEqn.H(), U, p));
+volVectorField HbyA(constrainHbyA(rAU*UEqn.H(), Uc, p));
 tUEqn.clear();
 
 bool closedVolume = false;
@@ -13,7 +13,7 @@ MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
 volScalarField rhorAtU("rhorAtU", rho*rAtU);
 
 // Update the pressure BCs to ensure flux consistency
-constrainPressure(p, rho, U, phiHbyA, rhorAtU, MRF);
+constrainPressure(p, rho, Uc, phiHbyA, rhorAtU, MRF);
 
 if (simple.transonic())
 {
@@ -75,7 +75,7 @@ if (simple.transonic())
 }
 else
 {
-    closedVolume = adjustPhi(phiHbyA, U, p);
+    closedVolume = adjustPhi(phiHbyA, Uc, p);
 
     phiHbyA += fvc::interpolate(rho*(rAtU - rAU))*fvc::snGrad(p)*mesh.magSf();
     HbyA -= (rAU - rAtU)*fvc::grad(p);
@@ -124,10 +124,10 @@ else
 // Explicitly relax pressure for momentum corrector
 p.relax();
 
-U = HbyA - rAtU*fvc::grad(p);
+Uc = HbyA - rAtU*fvc::grad(p);
 
-U.correctBoundaryConditions();
-fvOptions.correct(U);
+Uc.correctBoundaryConditions();
+fvOptions.correct(Uc);
 
 bool pLimited = pressureControl.limit(p);
 

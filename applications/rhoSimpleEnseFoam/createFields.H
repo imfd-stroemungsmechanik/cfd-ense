@@ -26,11 +26,11 @@ volScalarField rho
 
 // Convective velocity
 Info<< "Reading field U\n" << endl;
-volVectorField U
+volVectorField Uc
 (
     IOobject
     (
-        "U",
+        "Uc",
         runTime.timeName(),
         mesh,
         IOobject::MUST_READ,
@@ -39,7 +39,20 @@ volVectorField U
     mesh
 );
 
-#include "compressibleCreatePhi.H"
+Info<< "Reading/calculating face flux field phi\n" << endl;
+
+surfaceScalarField phi
+(
+    IOobject
+    (
+        "phi",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::AUTO_WRITE
+    ),
+    linearInterpolate(rho*Uc) & mesh.Sf()
+);
 
 pressureControl pressureControl(p, rho, simple.dict());
 
@@ -51,7 +64,7 @@ autoPtr<compressible::turbulenceModel> turbulence
     compressible::turbulenceModel::New
     (
         rho,
-        U,
+        Uc,
         phi,
         thermo
     )
@@ -131,17 +144,17 @@ volVectorField Ud
 );
 
 // Total velocity 
-volVectorField Ut
+volVectorField U
 (
     IOobject
     (
-        "Ut",
+        "U",
         runTime.timeName(),
         mesh,
         IOobject::NO_READ,
         IOobject::AUTO_WRITE
     ),
-    U + Ud
+    Uc + Ud
 );
 
 // Diffusive face-flux fields

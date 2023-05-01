@@ -2,8 +2,8 @@
     // Must be internal energy e
     volScalarField& he = thermo.he(); 
     
-    const volScalarField K("K", 0.5*magSqr(U));  
-    const volTensorField tauT = -thermo.mu()*(fvc::grad(U)+dev2(T(fvc::grad(U))))+U*md+dev2(md*U); 
+    const volScalarField K("K", 0.5*magSqr(Uc));  
+    const volTensorField tauT = -thermo.mu()*(fvc::grad(Uc)+dev2(T(fvc::grad(Uc))))+Uc*md+dev2(md*Uc); 
     
     // Assemble div(mdT*e) and constrain face normal component of mdT to zero on wall boundaries 
     fvScalarMatrix divMdTHe(fvm::laplacian(thermo.mu()*0.5, he));
@@ -28,8 +28,8 @@
       
       + fvm::div(phiMdp, he) + divMdTHe
       - K * fvc::div(phiMd)
-      + fvc::div(p*U)
-      + fvc::div(tauT & U)
+      + fvc::div(p*Uc)
+      + fvc::div(tauT & Uc)
      ==
         fvOptions(rho, he)
     );

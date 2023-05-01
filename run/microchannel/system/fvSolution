@@ -28,7 +28,7 @@ solvers
         //minIter         200000;
     }
 
-    "(U|k|omega|e)"
+    "(Uc|k|omega|e)"
     {
         solver          PBiCGStab;
         preconditioner  DILU;
@@ -43,7 +43,7 @@ SIMPLE
     residualControl
     {
         p               1e-4;
-        U               1e-4;
+        Uc               1e-4;
         "(k|omega|e)"   1e-4;
     }
 
@@ -72,7 +72,7 @@ relaxationFactors
     }
     equations
     {                
-        U               0.7;
+        Uc               0.7;
         e               0.7;
         "(k|omega)"     0.7;
     }

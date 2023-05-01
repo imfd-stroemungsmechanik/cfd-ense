@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
         mdp = -thermo.mu() * (1/p * fvc::grad(p));
         md = mdp + mdT;
         Ud = md/rho;
-        Ut = U + Ud;
+        U = Uc + Ud;
         
 
         #include "contErr.H"
