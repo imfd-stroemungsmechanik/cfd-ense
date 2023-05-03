@@ -15,6 +15,8 @@ volScalarField rhorAtU("rhorAtU", rho*rAtU);
 // Update the pressure BCs to ensure flux consistency
 constrainPressure(p, rho, Uc, phiHbyA, rhorAtU, MRF);
 
+volScalarField nMuByp = -thermo.mu()/p;
+
 if (simple.transonic())
 {
     surfaceScalarField phid
@@ -44,7 +46,7 @@ if (simple.transonic())
         // Assemble second part of continuity equation from new ENSE terms
         fvScalarMatrix epEqn
         (
-            fvm::laplacian(-thermo.mu()/p, p)
+            fvm::laplacian(nMuByp, p)
           + fvc::div(phiMdT)
         );         
 
@@ -94,7 +96,7 @@ else
         // Assemble second part of continuity equation from new ENSE terms
         fvScalarMatrix epEqn
         (
-            fvm::laplacian(-thermo.mu()/p, p)
+            fvm::laplacian(nMuByp, p)
           + fvc::div(phiMdT)
         );
 
