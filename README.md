@@ -11,22 +11,22 @@ Considering the following stationary, isothermal NSE:
 
 **Continuity equation:**
 
-$$\nabla \cdot \left( \rho \bm{u} \right) = 0$$
+$$\nabla \cdot \left( \rho {\underline{u}} \right) = 0$$
 
 **Momentum conservation equations:**
 
-$$\nabla \cdot \left(\rho \bm{u}^C \bm{u}^C\right)=- \nabla p - \nabla \cdot \bm{\underline{\tau}}$$
+$$\nabla \cdot \left(\rho {\underline{u}}^C {\underline{u}}^C\right)=- \nabla p - \nabla \cdot {\underline{\underline{\tau}}}$$
 
-* The continuity equation needs to be fulfilled for a total mass flux $\rho \bm{u}$
+* The continuity equation needs to be fulfilled for a total mass flux $\rho {\underline{u}}$
 * The following types of mass fluxes with different root causes are identified:
-    * Diffusion $\rho \bm{u}^D$: Considering the kinetic theory of gases, the statistical motion of particles (internal energy) along with the presence of density (and/or temperature) gradients will result in a macroscopic mass flux (not considered in the classical equations)
-    * Convection $\rho \bm{u}^C$: Fluid gets driven/accelerated by external forces/mechanical work in the macroscopic environment
-* Convective/transient acceleration terms are formulated in terms of the convective velocity $\bm{u}^C$ because macroscopic momentum is not a property of the diffusive velocity $\bm{u}^D$ 
-* Transport of momentum by mass diffusion gets considered when deriving the shear stress tensor $\bm{\underline{\tau}}$
-* The superposition of $\bm{u}^C$ and $\bm{u}^D$ is assumed : $\bm{u} = \bm{u}^C + \bm{u}^D$
+    * Diffusion $\rho {\underline{u}}^D$: Considering the kinetic theory of gases, the statistical motion of particles (internal energy) along with the presence of density (and/or temperature) gradients will result in a macroscopic mass flux (not considered in the classical equations)
+    * Convection $\rho {\underline{u}}^C$: Fluid gets driven/accelerated by external forces/mechanical work in the macroscopic environment
+* Convective/transient acceleration terms are formulated in terms of the convective velocity ${\underline{u}}^C$ because macroscopic momentum is not a property of the diffusive velocity ${\underline{u}}^D$ 
+* Transport of momentum by mass diffusion gets considered when deriving the shear stress tensor ${\underline{\underline{\tau}}}$
+* The superposition of ${\underline{u}}^C$ and ${\underline{u}}^D$ is assumed : ${\underline{u}} = {\underline{u}}^C + {\underline{u}}^D$
 
 ## Validity
-The ENSE has been validated for a limited range of use cases so far, e.g. isothermal, laminar flows with Knudsen numbers of up to ~1. The superposition assumption should be questioned & challenged. First attempts to solve turbulent flows and shockwaves seem to be promising [^4]. By including models for an effective mean free path it seems to be able to predict Knudsen diffusion in the free molecular regime $Kn > \sim 10$ [^7]. However, a comparision with over 30 experiments by Shen [^8] pointed out that there still seems to be something missing as the calculated massflow has some kind of offset starting in the slip flow regime. The quantity of this offset varies from experiment to experiment. As for now (05/2023) it is assumed that this is attributed to reflection of particles at the relatively smooth walls of microchannels as proposed by Maxwell [^9], hence the no-slip assumption for $\bm{u}^C$ might be insufficient here.
+The ENSE has been validated for a limited range of use cases so far, e.g. isothermal, laminar flows with Knudsen numbers of up to ~1. The superposition assumption should be questioned & challenged. First attempts to solve turbulent flows and shockwaves seem to be promising [^4]. By including models for an effective mean free path it seems to be able to predict Knudsen diffusion in the free molecular regime $Kn > \sim 10$ [^7]. However, a comparision with over 30 experiments by Shen [^8] pointed out that there still seems to be something missing as the calculated massflow has some kind of offset starting in the slip flow regime. The quantity of this offset varies from experiment to experiment. As for now (05/2023) it is assumed that this is attributed to reflection of particles at the relatively smooth walls of microchannels as proposed by Maxwell [^9], hence the no-slip assumption for ${\underline{u}}^C$ might be insufficient here.
 
 
 ## rhoSimpleEnseFoam
