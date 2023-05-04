@@ -7,7 +7,7 @@ Flows of ideal gases characterized by a certain range of Knudsennumbers ($Kn > \
 
 
 ## Core principle
-Considering the following stationary, isothermal NSE:
+Considering the following stationary NSE:
 
 **Continuity equation:**
 
@@ -22,7 +22,7 @@ $$\nabla \cdot \left(\rho {\underline{u}}^C {\underline{u}}^C\right)=- \nabla p 
     * Diffusion $\rho {\underline{u}}^D$: Considering the kinetic theory of gases, the statistical motion of particles (internal energy) along with the presence of density (and/or temperature) gradients will result in a macroscopic mass flux (not considered in the classical equations)
     * Convection $\rho {\underline{u}}^C$: Fluid gets driven/accelerated by external forces/mechanical work in the macroscopic environment
 * Convective/transient acceleration terms are formulated in terms of the convective velocity ${\underline{u}}^C$ because macroscopic momentum is not a property of the diffusive velocity ${\underline{u}}^D$ 
-* Transport of momentum by mass diffusion gets considered when deriving the shear stress tensor ${\underline{\underline{\tau}}}$
+* Transport of momentum / inernal energy by mass diffusion gets considered when deriving the shear stress tensor ${\underline{\underline{\tau}}}$ / heat flux vector
 * The superposition of ${\underline{u}}^C$ and ${\underline{u}}^D$ is assumed : ${\underline{u}} = {\underline{u}}^C + {\underline{u}}^D$
 
 ## Validity
