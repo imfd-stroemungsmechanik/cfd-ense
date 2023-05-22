@@ -1,9 +1,10 @@
 # cfd-ense
-OpenFOAM solver for investigating the extended Navier-Stokes equations (ENSE) as proposed by Durst, Sambasivam, Chakraborty, Dongari, Brenner et al. [^1][^2][^3][^4][^5][^6][^7].
+Collection of OpenFOAM solvers for investigating extended Navier-Stokes / bi-velocity models (ENSE) as proposed by Brenner, Sambasivam, Dongari, Dadzie, Durst, Chakraborty et al. [^1][^2][^3][^4][^5][^6][^7][^11].
+Currently only for the Sambasivam variant.
 
 ## Background
 
-Flows of ideal gases characterized by a certain range of Knudsennumbers ($Kn > \sim 0.01$) can not be accurately predicted by the classical Navier-Stokes equations (CNSE). This expresses itself in a deviation of the calculated from the experimentally determined mass flow rates, where the latter yields higher results. First attempts to take the missing physics into account for by extending the CNSE by new terms seem to be credited to Brenner [^5], which seem to have inspired others to take similar approaches. One of them was found to be more easily alignable with fundamental physical principles. Durst, Sambasivam et al. [^1][^2][^3][^4] initially named their newly derived model the extended Navier-Stokes equations. However, in the end these approaches are very similar and as Dongari et al. [^6] had proven in case of isothermal flows Brenners [^5] and Durst et al. [^1] models are identical. 
+Flows of ideal gases characterized by a certain range of Knudsennumbers ($Kn > \sim 0.01$) can not be accurately predicted by the classical Navier-Stokes equations (CNSE). This expresses itself in a deviation of the calculated from the experimentally determined mass flow rates, where the latter yields higher results. First attempts to take the missing physics into account for by extending the CNSE by new terms seem to be credited to Brenner [^5], which seem to have inspired others to take similar approaches. One of them was found to be more easily alignable with fundamental physical principles. Sambasivam, Durst et al. [^1][^2][^3][^4] initially named their newly derived model the extended Navier-Stokes equations (ENSE). However, in the end these approaches are very similar and as Dongari et al. [^6] had proven in case of isothermal flows Brenners [^5] and Durst et al. [^1] models are identical. 
 
 
 ## Core principle
@@ -22,8 +23,8 @@ $$\nabla \cdot \left(\rho {\underline{u}}^C {\underline{u}}^C\right)=- \nabla p 
     * Diffusion $\rho {\underline{u}}^D$: Considering the kinetic theory of gases, the statistical motion of particles (internal energy) along with the presence of density (and/or temperature) gradients will result in a macroscopic mass flux (not considered in the classical equations)
     * Convection $\rho {\underline{u}}^C$: Fluid gets driven/accelerated by external forces/mechanical work in the macroscopic environment
 * Convective/transient acceleration terms are formulated in terms of the convective velocity ${\underline{u}}^C$ because macroscopic momentum is not a property of the diffusive velocity ${\underline{u}}^D$ 
-* Transport of momentum / inernal energy by mass diffusion gets considered when deriving the shear stress tensor ${\underline{\underline{\tau}}}$ / heat flux vector
-* The superposition of ${\underline{u}}^C$ and ${\underline{u}}^D$ is assumed : ${\underline{u}} = {\underline{u}}^C + {\underline{u}}^D$
+* Transport of momentum / internal energy by mass diffusion gets considered when deriving the shear stress tensor ${\underline{\underline{\tau}}}$ / heat flux vector
+* The superposition of ${\underline{u}}^C$ and ${\underline{u}}^D$ is assumed : ${\underline{u}} = {\underline{u}}^C + {\underline{u}}^D$ [^11]
 
 ## Validity
 The ENSE has been validated for a limited range of use cases so far, e.g. isothermal, laminar flows with Knudsen numbers of up to ~1. The superposition assumption should be questioned & challenged. First attempts to solve turbulent flows and shockwaves seem to be promising [^4]. By including models for an effective mean free path it seems to be able to predict Knudsen diffusion in the free molecular regime $Kn > \sim 10$ [^7]. However, a comparision with over 30 experiments by Shen [^8] pointed out that there still seems to be something missing as the calculated massflow has some kind of offset starting in the slip flow regime. The quantity of this offset varies from experiment to experiment. As for now (05/2023) it is assumed that this is attributed to reflection of particles at the relatively smooth walls of microchannels as proposed by Maxwell [^9], hence the no-slip assumption for ${\underline{u}}^C$ might be insufficient here.
@@ -99,3 +100,5 @@ Philosophical Transactions of the Royal Society of London
 https://doi.org/10.1098/rstl.1879.0067
 
 [^10]: Johannes Schwarz, Kristjan Axelsson, Daniel Anheuer, Martin Richter, Johanna Adam, Martin Heinrich, Rüdiger Schwarze. An OpenFOAM solver for the extended Navier–Stokes equations. SoftwareX. Volume 22. 2023. 101378. ISSN 2352-7110. https://doi.org/10.1016/j.softx.2023.101378.
+
+[^11]: S Kokou Dadzie, Howard Brenner. Predicting enhanced mass flow rates in gas microchannels using nonkinetic models. Physical Review E. 2012. http://dx.doi.org/10.1103/PhysRevE.86.036318

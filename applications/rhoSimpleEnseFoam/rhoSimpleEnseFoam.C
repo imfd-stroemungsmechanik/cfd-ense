@@ -29,7 +29,8 @@ Application
 Description
     Pressure-based, steady-state and sequential solver for the compressible
     flow of gases. Solves the extended Navier-Stokes equations
-    (ENSE) by Durst et al. to include mass diffusion for the simulation of
+    (ENSE) by Brenner et al. (Sambasivam variant)
+    to include mass diffusion for the simulation of 
     flows with high Knudsen numbers.
 
 \*---------------------------------------------------------------------------*/
@@ -51,7 +52,7 @@ int main(int argc, char *argv[])
     argList::addNote
     (
         "Steady-state solver for the compressible flow of gases."
-        "Solves the extended Navier-Stokes equations (ENSE) by Durst et al."
+        "Solves the extended Navier-Stokes equations (ENSE) by Brenner et al. (Sambasivam variant)"
     );
 
     #include "postProcess.H"
