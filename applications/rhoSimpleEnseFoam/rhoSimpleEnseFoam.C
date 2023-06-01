@@ -30,7 +30,7 @@ Description
     Pressure-based, steady-state and sequential solver for the compressible
     flow of gases. Solves the extended Navier-Stokes equations
     (ENSE) by Brenner et al. (Sambasivam variant)
-    to include mass diffusion for the simulation of 
+    to include mass diffusion for the simulation of
     flows with high Knudsen numbers.
 
 \*---------------------------------------------------------------------------*/
@@ -44,6 +44,7 @@ Description
 
 #include "maxwellSlipUFvPatchVectorField.H"
 #include "smoluchowskiJumpTFvPatchScalarField.H"
+#include "constrainmdT.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -70,19 +71,19 @@ int main(int argc, char *argv[])
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    Info<< "\nStarting time loop\n" << endl;     
+    Info<< "\nStarting time loop\n" << endl;
 
     while (simple.loop())
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
         // Pressure-velocity SIMPLE corrector
-        #include "UEqn.H"       
+        #include "UEqn.H"
 
         if (!isothermal)
         {
-            #include "EEqn.H"           
-        }        
+            #include "EEqn.H"
+        }
 
         if (simple.consistent())
         {
@@ -93,20 +94,19 @@ int main(int argc, char *argv[])
             #include "pEqn.H"
         }
         // Update diffusive face-flux field
-        phiMd = phiMdT + phiMdp;
+        phimd = phimdT + phimdp;
 
         turbulence->correct();
 
         if(!isothermal)
         {
-            mdT = thermo.mu() * 1/(2*thermo.T()) * fvc::grad(thermo.T()); 
-            #include "constrainMdT.H"
+            mdT = constrainmdT(thermo.mu()*1/(2*thermo.T())*fvc::grad(thermo.T()));
         }
-        mdp = -thermo.mu() * (1/p * fvc::grad(p));
+        mdp = -thermo.mu()*(1/p*fvc::grad(p));
         md = mdp + mdT;
         Ud = md/rho;
-        U = Uc + Ud;
-        
+        Ut = U + Ud;
+
 
         #include "contErr.H"
 

@@ -1,6 +1,6 @@
 volScalarField rAU(1.0/UEqn.A());
 surfaceScalarField rhorAUf("rhorAUf", fvc::interpolate(rho*rAU));
-volVectorField HbyA(constrainHbyA(rAU*UEqn.H(), Uc, p));
+volVectorField HbyA(constrainHbyA(rAU*UEqn.H(), U, p));
 tUEqn.clear();
 
 bool closedVolume = false;
@@ -9,9 +9,9 @@ surfaceScalarField phiHbyA("phiHbyA", fvc::interpolate(rho)*fvc::flux(HbyA));
 MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
 
 // Update the pressure BCs to ensure flux consistency
-constrainPressure(p, rho, Uc, phiHbyA, rhorAUf, MRF);
+constrainPressure(p, rho, U, phiHbyA, rhorAUf, MRF);
 
-volScalarField nMuByp = -thermo.mu()/p;
+volScalarField nmuByp = -thermo.mu()/p;
 
 if (simple.transonic())
 {
@@ -30,7 +30,7 @@ if (simple.transonic())
         (
             fvc::div(phiHbyA)
           + fvm::div(phid, p)
-          - fvm::laplacian(rhorAUf, p)          
+          - fvm::laplacian(rhorAUf, p)
           ==
             fvOptions(psi, p, rho.name())
         );
@@ -38,8 +38,8 @@ if (simple.transonic())
         // Assemble second part of continuity equation from new ENSE terms
         fvScalarMatrix epEqn
         (
-            fvm::laplacian(nMuByp, p)
-          + fvc::div(phiMdT)
+            fvm::laplacian(nmuByp, p)
+          + fvc::div(phimdT)
         );
 
         // Combine both pressure equation assemblies
@@ -59,17 +59,17 @@ if (simple.transonic())
         );
 
         pEqn.solve();
-        
+
         if (simple.finalNonOrthogonalIter())
         {
             phi = phiHbyA + cpEqn.flux();
-            phiMdp = epEqn.flux();
+            phimdp = epEqn.flux();
         }
     }
 }
 else
 {
-    closedVolume = adjustPhi(phiHbyA, Uc, p);    
+    closedVolume = adjustPhi(phiHbyA, U, p);
 
     while (simple.correctNonOrthogonal())
     {
@@ -77,7 +77,7 @@ else
         fvScalarMatrix cpEqn
         (
             fvc::div(phiHbyA)
-          - fvm::laplacian(rhorAUf, p)         
+          - fvm::laplacian(rhorAUf, p)
           ==
             fvOptions(psi, p, rho.name())
         );
@@ -85,8 +85,8 @@ else
         // Assemble second part of continuity equation from new ENSE terms
         fvScalarMatrix epEqn
         (
-            fvm::laplacian(nMuByp, p)
-          + fvc::div(phiMdT)
+            fvm::laplacian(nmuByp, p)
+          + fvc::div(phimdT)
         );
 
         // Combine both pressure equation assemblies
@@ -94,7 +94,7 @@ else
         (
             cpEqn
           + epEqn
-        );        
+        );
 
         pEqn.setReference
         (
@@ -103,11 +103,11 @@ else
         );
 
         pEqn.solve();
-        
+
         if (simple.finalNonOrthogonalIter())
         {
             phi = phiHbyA + cpEqn.flux();
-            phiMdp = epEqn.flux();
+            phimdp = epEqn.flux();
         }
     }
 }
@@ -115,8 +115,8 @@ else
 // Explicitly relax pressure for momentum corrector
 p.relax();
 
-Uc = HbyA - rAU*fvc::grad(p);
-Uc.correctBoundaryConditions();
+U = HbyA - rAU*fvc::grad(p);
+U.correctBoundaryConditions();
 fvOptions.correct(U);
 
 bool pLimited = pressureControl.limit(p);

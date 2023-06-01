@@ -2,7 +2,7 @@ rho = thermo.rho();
 
 volScalarField rAU(1.0/UEqn.A());
 volScalarField rAtU(1.0/(1.0/rAU - UEqn.H1()));
-volVectorField HbyA(constrainHbyA(rAU*UEqn.H(), Uc, p));
+volVectorField HbyA(constrainHbyA(rAU*UEqn.H(), U, p));
 tUEqn.clear();
 
 bool closedVolume = false;
@@ -13,9 +13,9 @@ MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
 volScalarField rhorAtU("rhorAtU", rho*rAtU);
 
 // Update the pressure BCs to ensure flux consistency
-constrainPressure(p, rho, Uc, phiHbyA, rhorAtU, MRF);
+constrainPressure(p, rho, U, phiHbyA, rhorAtU, MRF);
 
-volScalarField nMuByp = -thermo.mu()/p;
+volScalarField nmuByp = -thermo.mu()/p;
 
 if (simple.transonic())
 {
@@ -41,14 +41,14 @@ if (simple.transonic())
           - fvm::laplacian(rhorAtU, p)
          ==
             fvOptions(psi, p, rho.name())
-        );  
+        );
 
         // Assemble second part of continuity equation from new ENSE terms
         fvScalarMatrix epEqn
         (
-            fvm::laplacian(nMuByp, p)
-          + fvc::div(phiMdT)
-        );         
+            fvm::laplacian(nmuByp, p)
+          + fvc::div(phimdT)
+        );
 
         // Combine both pressure equation assemblies
         fvScalarMatrix pEqn
@@ -67,17 +67,17 @@ if (simple.transonic())
         );
 
         pEqn.solve();
-        
+
         if (simple.finalNonOrthogonalIter())
         {
             phi = phiHbyA + cpEqn.flux();
-            phiMdp = epEqn.flux();
+            phimdp = epEqn.flux();
         }
     }
 }
 else
 {
-    closedVolume = adjustPhi(phiHbyA, Uc, p);
+    closedVolume = adjustPhi(phiHbyA, U, p);
 
     phiHbyA += fvc::interpolate(rho*(rAtU - rAU))*fvc::snGrad(p)*mesh.magSf();
     HbyA -= (rAU - rAtU)*fvc::grad(p);
@@ -96,8 +96,8 @@ else
         // Assemble second part of continuity equation from new ENSE terms
         fvScalarMatrix epEqn
         (
-            fvm::laplacian(nMuByp, p)
-          + fvc::div(phiMdT)
+            fvm::laplacian(nmuByp, p)
+          + fvc::div(phimdT)
         );
 
         // Combine both pressure equation assemblies
@@ -118,7 +118,7 @@ else
         if (simple.finalNonOrthogonalIter())
         {
             phi = phiHbyA + cpEqn.flux();
-            phiMdp = epEqn.flux();
+            phimdp = epEqn.flux();
         }
     }
 }
@@ -126,10 +126,10 @@ else
 // Explicitly relax pressure for momentum corrector
 p.relax();
 
-Uc = HbyA - rAtU*fvc::grad(p);
+U = HbyA - rAtU*fvc::grad(p);
 
-Uc.correctBoundaryConditions();
-fvOptions.correct(Uc);
+U.correctBoundaryConditions();
+fvOptions.correct(U);
 
 bool pLimited = pressureControl.limit(p);
 

@@ -1,6 +1,6 @@
 {
 
-massRes = fvc::div(phi + phiMd); 
+massRes = fvc::div(phi + phimd);
 
 scalar sumLocalmassRes = runTime.deltaTValue()*mag(massRes)().weightedAverage(mesh.V()).value();
 scalar globalmassRes = runTime.deltaTValue()*massRes.weightedAverage(mesh.V()).value();
@@ -12,4 +12,4 @@ Info<< "time step continuity errors : sum = " << gSum(massRes)
  << ", cumulative = " <<  cumulativeContErr
  << endl;
 
-}      
+}

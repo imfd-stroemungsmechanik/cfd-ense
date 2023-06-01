@@ -26,7 +26,7 @@ volScalarField rho
 
 // Convective velocity
 Info<< "Reading field U\n" << endl;
-volVectorField Uc
+volVectorField U
 (
     IOobject
     (
@@ -51,7 +51,7 @@ surfaceScalarField phi
         IOobject::READ_IF_PRESENT,
         IOobject::AUTO_WRITE
     ),
-    linearInterpolate(rho*Uc) & mesh.Sf()
+    linearInterpolate(rho*U) & mesh.Sf()
 );
 
 pressureControl pressureControl(p, rho, simple.dict());
@@ -64,7 +64,7 @@ autoPtr<compressible::turbulenceModel> turbulence
     compressible::turbulenceModel::New
     (
         rho,
-        Uc,
+        U,
         phi,
         thermo
     )
@@ -90,12 +90,11 @@ volVectorField mdT
     ),
     mesh,
     dimensionedVector("mdT", dimensionSet(1,-2,-1,0,0,0,0), Foam::vector(0,0,0))
-); 
+);
 
 if(!isothermal)
 {
-    mdT = thermo.mu() * 1/(2*thermo.T()) * fvc::grad(thermo.T());   
-    #include "constrainMdT.H"
+    mdT = constrainmdT(thermo.mu()*1/(2*thermo.T())*fvc::grad(thermo.T()));
 }
 
 
@@ -110,7 +109,7 @@ volVectorField mdp
         IOobject::NO_READ,
         IOobject::AUTO_WRITE
     ),
-    -thermo.mu() * (1/p * fvc::grad(p))
+    -thermo.mu()*(1/p*fvc::grad(p))
 );
 
 
@@ -124,7 +123,7 @@ volVectorField md
         mesh,
         IOobject::NO_READ,
         IOobject::AUTO_WRITE
-    ),   
+    ),
     mdT + mdp
 );
 
@@ -143,8 +142,8 @@ volVectorField Ud
     md/rho
 );
 
-// Total velocity 
-volVectorField U
+// Total velocity
+volVectorField Ut
 (
     IOobject
     (
@@ -154,13 +153,13 @@ volVectorField U
         IOobject::NO_READ,
         IOobject::AUTO_WRITE
     ),
-    Uc + Ud
+    U + Ud
 );
 
 // Diffusive face-flux fields
-surfaceScalarField phiMdT = fvc::flux(mdT);
-surfaceScalarField phiMdp = fvc::flux(mdp);
-surfaceScalarField phiMd = phiMdT + phiMdp;
+surfaceScalarField phimdT = fvc::flux(mdT);
+surfaceScalarField phimdp = fvc::flux(mdp);
+surfaceScalarField phimd = phimdT + phimdp;
 
 volScalarField massRes
 (
@@ -172,5 +171,5 @@ volScalarField massRes
         IOobject::NO_READ,
         IOobject::AUTO_WRITE
     ),
-    fvc::div(phi + phiMd)
+    fvc::div(phi + phimd)
 );
