@@ -1,0 +1,3 @@
+blockCoupledSenseFoam.C
+
+EXE = $(FOAM_APPBIN)/blockCoupledSenseFoam
