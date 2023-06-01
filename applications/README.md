@@ -27,7 +27,7 @@ cd cfd-ense
 wmake ./applications/rhoSimpleEnseFoam
 ```
 
-### blockCoupledSenseFoam
+## blockCoupledSenseFoam
 
 #### Features
 

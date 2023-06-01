@@ -27,7 +27,6 @@ A very brief introduction into the SENSE model and OpenFOAM programming with res
 
 - Pressure-based, steady-state and block-coupled solver for the SENSE
 - Solves a block-coupled compressible U-p-e system. Achieves implicit coupling between the flow variables - e.g. the temperature dependent diffusion term in the continuity equation gets also implicitly discretized
-- Utilizes most basic coupling strategies
 - Based on [foam-extend 5.0](https://sourceforge.net/projects/foam-extend/)
 
 More background for solvers and testcases is given in the subfolders readmes.
