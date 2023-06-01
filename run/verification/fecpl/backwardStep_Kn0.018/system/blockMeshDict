@@ -1,0 +1,131 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2006                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+scale   1e-6;
+
+h 1.25;
+
+L  5.6;
+l_ 0.86;
+S 0.467;
+
+//hh #eval{1.81*$h};
+//x #eval{$L * $h};
+//l #eval{$l_ * $h};
+//s #eval{$S * $h};
+
+hh 2.2625;
+x 7.0;
+l 1.075;
+s 0.58375;
+
+vertices
+(
+    (0 $s 0)
+    ($l $s 0)
+    ($l $h 0)
+    (0 $h 0)
+
+    (0 $s 1)
+    ($l $s 1)
+    ($l $h 1)
+    (0 $h 1)
+    
+    ($hh $s 0)
+    ($hh $h 0)
+    
+    ($hh $s 1)
+    ($hh $h 1)
+    
+    ($x $s 0)
+    ($x $h 0)
+
+    ($x $s 1)
+    ($x $h 1)   
+
+    ($hh 0 0)
+    ($x 0 0)    
+
+    ($hh 0 1)
+    ($x 0 1)    
+    
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) (40 50 1) simpleGrading (1 1 1)
+    hex (1 8 9 2 5 10 11 6) (40 50 1) simpleGrading (1 1 1)
+    hex (8 12 13 9 10 14 15 11) (220 50 1) simpleGrading (1 1 1)
+    hex (16 17 12 8 18 19 14 10) (220 60 1) simpleGrading (1 1 1)
+);
+
+edges
+(
+);
+
+boundary
+(
+    
+    INLET
+    {
+        type patch;
+        faces
+        (
+            (0 3 7 4)            
+        );
+    }
+    OUTLET
+    {
+        type patch;
+        faces
+        (
+            (12 13 15 14)
+            (17 12 14 19)
+        );
+    }
+
+    WALL
+    {
+        type wall;
+        faces
+        (
+            (2 9 11 6)
+            (1 5 10 8)
+            (9 13 15 11)
+            (8 10 18 16)
+            (16 18 19 17)
+            
+        );
+    }
+    
+    SYMMETRY
+    {
+        type symmetry;
+        faces
+        (
+            (3 2 6 7)
+            (0 4 5 1)
+        );
+    }
+
+    
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //

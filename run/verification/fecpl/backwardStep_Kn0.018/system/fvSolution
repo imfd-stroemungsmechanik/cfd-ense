@@ -1,0 +1,137 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+//     Up
+//     {
+//         solver BiCGStab;
+//         preconditioner Cholesky;
+
+//         tolerance 1e-07;
+//         relTol  0.0;
+
+//         minIter 1;
+//         maxIter 1000;
+//     }
+
+    Up
+    {
+        solver          AMG;
+        cycle           W-cycle;
+        coarseningType  SAMG;
+        norm            componentNorm;
+        normComponent   3;
+//
+       // minGroupSize    4;
+       // maxGroupSize    6;
+//
+          nPreSweeps      2;//200;//20;//2;
+        nPostSweeps     2;//200;//20;//2;
+        groupSize       2;
+        minCoarseEqns   4;//1000;//100;//;//4;
+        nMaxLevels      100;//10000;//1000;//100;
+        scale           on;
+        smoother        ILUC0;
+//
+        minIter         5;
+        maxIter         500;
+        tolerance       1e-6;
+        relTol          0.1;
+    }
+
+        UpE
+   {
+        solver          AMG;
+        cycle           V-cycle;
+        coarseningType  SAMG;
+        norm            componentNorm;
+        normComponent   3;
+//
+       // minGroupSize    4;
+       // maxGroupSize    6;
+//
+          nPreSweeps      2;//200;//20;//2;
+        nPostSweeps     2;//200;//20;//2;
+        groupSize       2;
+        minCoarseEqns   4;//1000;//100;//;//4;
+        nMaxLevels      100;//10000;//1000;//100;
+        scale           on;
+        smoother        ILUC0;
+//
+        minIter         2;
+        maxIter         500;
+        tolerance       1e-6;
+        relTol          0.1;
+   }
+
+    // Segregated
+    p
+    {
+        solver           PCG;
+        preconditioner   DIC;
+        tolerance        1e-06;
+        relTol           0.01;
+    }
+    Uc
+    {
+        solver           BiCGStab;
+        preconditioner   DILU;
+        tolerance        1e-07;
+        relTol           0.1;
+    }
+
+    e
+    {
+        solver          BiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-6;
+        relTol          0.1;
+        minIter 2;
+        maxIter 1000;
+    }
+}
+
+blockSolver
+{
+    convergence 1e-6;
+}
+
+SIMPLE
+{
+    nNonOrthoCorrectors 0;
+}
+
+fieldBounds
+{
+    Uc      5000;
+    p      -1000e4 1000e4;
+}
+
+relaxationFactors
+{
+    //p   0.01;
+     Uc    0.98;
+     e  0.995;
+}
+
+NSE
+{
+
+}
+
+
+// ************************************************************************* //
