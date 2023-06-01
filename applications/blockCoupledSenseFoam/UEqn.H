@@ -51,9 +51,8 @@ if (gMin(rAU) < 0)
 // Under-relax momentum. Note this will destroy the H and A
 UEqn.relax();
 
-#   include "addBlockCoupledBC.H"
-
 UpEEqn.insertEquation(0, UEqn);
+#   include "addBlockCoupledBC.H"
 UpEEqn.insertBlockCoupling(0, 3, pInU, true);
 UpEEqn.insertEquationCoupling(0, 3, pInU0);
 UpEEqn.insertEquationCoupling(1, 3, pInU1);

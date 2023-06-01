@@ -25,11 +25,9 @@ Application
     blockCoupledSenseFoam
 
 Description
-    Steady-state solver for compressible flow of ideal gases solving
-    Sambasivam's set of extended Navier-Stokes equations (SENSE)
-    to include self-diffusion of mass.
-
-    Solves a block coupled U-p-e system.
+    Pressure-based, steady-state solver for compressible flow of ideal
+    gases. Solves Sambasivam's set of extended Navier-Stokes equations (SENSE)
+    to include self-diffusion of mass. Solves a block coupled U-p-e system.
 
 Authors
     Klas Jareteg, Chalmers University of Technology,
@@ -77,13 +75,13 @@ int main(int argc, char *argv[])
         const surfaceScalarField phiPsi = fvc::interpolate(psi*U) & mesh.Sf();
         const surfaceScalarField rhof = fvc::interpolate(rho);
 
-        // Assemble and insert momentum equations
+        // Assemble and insert momentum equations (including couplings)
 #       include "UEqn.H"
 
-        // Assemble and insert pressure equation
+        // Assemble and insert pressure equation (including couplings)
 #       include "pEqn.H"
 
-        // Assemble and insert energy equation
+        // Assemble and insert energy equation (including couplings)
 #       include "EEqn.H"
 
         // Solve the block matrix
