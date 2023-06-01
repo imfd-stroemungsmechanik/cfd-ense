@@ -10,7 +10,7 @@ The SENSE has already been validated for a few use-cases so far, e.g. certain la
 
 ## Solvers
 
-A brief very brief introduction into the SENSE model and OpenFOAM programming with respect to the rhoSimpleEnseFoam solver is given in [^10]. The derivation of the SENSE model itself was done by Sambasivam in his Ph.D. thesis [^4].
+A very brief introduction into the SENSE model and OpenFOAM programming with respect to the rhoSimpleEnseFoam solver is given in [^10]. The derivation of the SENSE model itself was done by Sambasivam in his Ph.D. thesis [^4].
 
 ### rhoSimpleEnseFoam
 
