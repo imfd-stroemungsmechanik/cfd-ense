@@ -1,66 +1,37 @@
 # cfd-ense
-Collection of OpenFOAM solvers for investigating extended Navier-Stokes / bi-velocity models (ENSE) as proposed by Brenner, Sambasivam, Dongari, Dadzie, Durst, Chakraborty et al. [^1][^2][^3][^4][^5][^6][^7][^11].
-Currently only for the Sambasivam variant.
+This repository currently contains a sequential (rhoSimpleEnseFoam) and a block-coupled (blockCoupledSenseFoam) steady-state OpenFOAM / foam-extend solver for Sambasivam's [^4] set of extended Navier-Stokes equations (SENSE) as well as a few testcases.
 
 ## Background
 
-Flows of ideal gases characterized by a certain range of Knudsennumbers ($Kn > \sim 0.01$) can not be accurately predicted by the classical Navier-Stokes equations (CNSE). This expresses itself in a deviation of the calculated from the experimentally determined mass flow rates, where the latter yields higher results. First attempts to take the missing physics into account for by extending the CNSE by new terms seem to be credited to Brenner [^5], which seem to have inspired others to take similar approaches. One of them was found to be more easily alignable with fundamental physical principles. Sambasivam, Durst et al. [^1][^2][^3][^4] initially named their newly derived model the extended Navier-Stokes equations (ENSE). However, in the end these approaches are very similar and as Dongari et al. [^6] had proven in case of isothermal flows Brenners [^5] and Durst et al. [^1] models are identical. 
-
-
-## Core principle
-Considering the following stationary NSE:
-
-**Continuity equation:**
-
-$$\nabla \cdot \left( \rho {\underline{u}} \right) = 0$$
-
-**Momentum conservation equations:**
-
-$$\nabla \cdot \left(\rho {\underline{u}}^C {\underline{u}}^C\right)=- \nabla p - \nabla \cdot {\underline{\underline{\tau}}}$$
-
-* The continuity equation needs to be fulfilled for a total mass flux $\rho {\underline{u}}$
-* The following types of mass fluxes with different root causes are identified:
-    * Diffusion $\rho {\underline{u}}^D$: Considering the kinetic theory of gases, the statistical motion of particles (internal energy) along with the presence of density (and/or temperature) gradients will result in a macroscopic mass flux (not considered in the classical equations)
-    * Convection $\rho {\underline{u}}^C$: Fluid gets driven/accelerated by external forces/mechanical work in the macroscopic environment
-* Convective/transient acceleration terms are formulated in terms of the convective velocity ${\underline{u}}^C$ because macroscopic momentum is not a property of the diffusive velocity ${\underline{u}}^D$ 
-* Transport of momentum / internal energy by mass diffusion gets considered when deriving the shear stress tensor ${\underline{\underline{\tau}}}$ / heat flux vector
-* The superposition of ${\underline{u}}^C$ and ${\underline{u}}^D$ is assumed : ${\underline{u}} = {\underline{u}}^C + {\underline{u}}^D$ [^11]
+Flows of ideal gases characterized by a certain range of Knudsennumbers ($Kn > 0.01$) cannot be accurately predicted by the classical Navier-Stokes equations (CNSE). This expresses itself in a deviation of the calculated from the experimentally determined mass flow rates, with higher values being observed for the latter. First approaches in the recent decades to take the missing physics into account for by extending the CNSE by new terms were pursued by Brenner [^5], which were then followed by those of several other scientists [^13]. One group of them derived a model that was found to be more easily alignable with fundamental physical principles.  Durst, Gomes and Sambasivam [^1] termed their newly derived model as "extended Navier-Stokes equations" ("ENSE"). While the terminologies and initial approaches appear to be different, from a mathematical point of view Brenner's and "ENSE" models are very similar: At several places an additional diffusive flux term gets introduced into the Navier-Stokes system. In both cases this flux contains a density gradient, which becomes significant under certain conditions, e.g. large Knudsen numbers, is otherwise commonly neglectable and not considered in the classical equations. However, the Brenner-flux appears to be more general and should be applicable to liquids aswell [^13]. The "ENSE"-flux on the other hand is more specifically related to the kinetic theory of (ideal) gases and also contains an additional temperature-gradient-term, also known as "Soret-diffusion". Therefore, the main focus for this repository lies on the "ENSE" model now or - to be more precise - on Sambasivam's Ph.D. thesis variant of it (SENSE).
 
 ## Validity
-The ENSE has been validated for a limited range of use cases so far, e.g. isothermal, laminar flows with Knudsen numbers of up to ~1. The superposition assumption should be questioned & challenged. First attempts to solve turbulent flows and shockwaves seem to be promising [^4]. By including models for an effective mean free path it seems to be able to predict Knudsen diffusion in the free molecular regime $Kn > \sim 10$ [^7]. However, a comparision with over 30 experiments by Shen [^8] pointed out that there still seems to be something missing as the calculated massflow has some kind of offset starting in the slip flow regime. The quantity of this offset varies from experiment to experiment. As for now (05/2023) it is assumed that this is attributed to reflection of particles at the relatively smooth walls of microchannels as proposed by Maxwell [^9], hence the no-slip assumption for ${\underline{u}}^C$ might be insufficient here.
+The SENSE has already been validated for a few use-cases so far, e.g. certain laminar flows with Knudsen numbers of up to $O(1)$. First simulations of turbulent flows and shockwaves are promising [^4]. By including models for an effective mean free path it seems to be able to predict the transitional and free molecular flow regime ($Kn > 10$) [^7]. Using the $G_m$ - plot and the exact analytical model/method as proposed by Dongari et al. [^7] the curvatures of the calculated graph were found to fit indeed very well with those of the experimental curve of Ewart et al. [^12] for mean Knudsen numbers of up to 80. However, there was overall an obvious offset visible. This offset is also clearly observable in almost every single one of the over 30 comparisons with experiments carried out by Shen [^8].
 
+## Solvers
 
-## rhoSimpleEnseFoam
+A brief very brief introduction into the SENSE model and OpenFOAM programming with respect to the rhoSimpleEnseFoam solver is given in [^10]. The derivation of the SENSE model itself was done by Sambasivam in his Ph.D. thesis [^4].
 
-Introduced in [^10].
+### rhoSimpleEnseFoam
 
-### Features
+#### Features
 
-- Pressure-based, steady-state and sequential solver for of the ENSE
+- Pressure-based, steady-state and sequential solver for of the SENSE
 - If the isothermal switch in the SIMPLE subdictionary is set to "yes", solving the energy equation will be omitted
 - Naming of velocity fields is consistend with paper [^10] where this work is presented
 - Based on rhoSimpleFoam in [OpenFOAM v2006 / v2212 ](https://www.openfoam.com)
 
-### Compilation and usage
+### blockCoupledSenseFoam
 
-A guide for installation of OpenFOAM v2212 on Linux can be found [here](https://develop.openfoam.com/Development/openfoam/-/wikis/precompiled/debian)
+#### Features
 
-Installation on Windows seems to be most advantageously achieved when using WSL along with Ubuntu.
+- Pressure-based, steady-state and block-coupled solver for the SENSE
+- Solves a block-coupled compressible U-p-e system. Achieves implicit coupling between the flow variables - e.g. the temperature dependent diffusion term in the continuity equation gets also implicitly discretized
+- Utilizes most basic coupling strategies
+- Based on [foam-extend 5.0](https://sourceforge.net/projects/foam-extend/)
 
-After sourcing the OpenFOAM v2006 / v2212 environment in a shell, clone the repository and compile the solver:
-```bash
-git clone https://github.com/imfd-stroemungsmechanik/cfd-ense.git
-cd cfd-ense
-wmake ./applications/rhoSimpleEnseFoam
-```
- 
-To run the microchannel test case, create the mesh and start the solver:
-```bash
-cd ./run/microchannel
-blockMesh
-rhoSimpleEnseFoam
-```
-The most accurate reproduction of the residuals/underrelaxation-factors presented in the paper [^10] can be achieved by running it on one computational core and using version v2006. Background for solvers and testcases is given in the subfolders readmes.
+More background for solvers and testcases is given in the subfolders readmes.
+
 \
 \
 (c) Johannes Schwarz, 2023
@@ -79,13 +50,13 @@ ible ideal gas flows: Towards extended constitutive forms. Phys Fluids
 revisited: Continuum versus rarified gas considerations. J Inst Eng (India):
 Ser C 2020;101. http://dx.doi.org/10.1007/s40032-020-00586-3
 
-[^4]: Sambasivam Rajamani. Extended Navier-Stokes Equations:  
+[^4]: Sambasivam Rajamani. Extended Navier-Stokes Equations:
 Derivations and Applications to Fluid Flow Problems (Ph.D. thesis), Friedrich-
 Alexander-Universität Erlangen-Nürnberg; 2012
 
 [^5]: Brenner Howard. Navier–Stokes revisited. Physica A 2004;349:60–132. http://dx.doi.org/10.1016/j.physa.2004.10.034.
 
-[^6]: Dongari, Nishanth & Sharma IITK, Ashutosh & Durst, F.. (2009). Pressure-driven diffusive gas flows in micro-channels: From the Knudsen to the continuum regimes. Microfluidics and Nanofluidics. 6. 679-692. https://doi.org/10.1007/S10404-008-0344-Y. 
+[^6]: Dongari, Nishanth & Sharma IITK, Ashutosh & Durst, F.. (2009). Pressure-driven diffusive gas flows in micro-channels: From the Knudsen to the continuum regimes. Microfluidics and Nanofluidics. 6. 679-692. https://doi.org/10.1007/S10404-008-0344-Y.
 
 [^7]: Dongari Nishanth, Durst F, Chakraborty Suman. Predicting microscale
 gas flows and rarefaction effects through extended Navier–Stokes–Fourier
@@ -102,3 +73,7 @@ https://doi.org/10.1098/rstl.1879.0067
 [^10]: Johannes Schwarz, Kristjan Axelsson, Daniel Anheuer, Martin Richter, Johanna Adam, Martin Heinrich, Rüdiger Schwarze. An OpenFOAM solver for the extended Navier–Stokes equations. SoftwareX. Volume 22. 2023. 101378. ISSN 2352-7110. https://doi.org/10.1016/j.softx.2023.101378.
 
 [^11]: S Kokou Dadzie, Howard Brenner. Predicting enhanced mass flow rates in gas microchannels using nonkinetic models. Physical Review E. 2012. http://dx.doi.org/10.1103/PhysRevE.86.036318
+
+[^12]: Timothée Ewart, Pierre Perrier, Irina A. Graur, J. Gilbert Méolans. Mass flow rate measurements in a microchannel, from hydrodynamic to near free molecular regimes. Journal of Fluid Mechanics. 2007, http://dx.doi.org/10.1017/S0022112007006374
+
+[^13]: Howard Brenner. Beyond Navier-Stokes. International Journal of Engineering Science. 2012. http://dx.doi.org/10.1016/j.ijengsci.2012.01.006
