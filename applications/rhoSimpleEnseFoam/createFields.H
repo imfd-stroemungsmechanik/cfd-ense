@@ -77,7 +77,7 @@ dimensionedScalar initialMass = fvc::domainIntegrate(rho);
 
 bool isothermal = simple.dict().getOrDefault("isothermal", false);
 
-// Soret's diffusion term
+// Temperature dependent diffusion term
 volVectorField mdT
 (
     IOobject
@@ -98,7 +98,7 @@ if(!isothermal)
 }
 
 
-// Fick's diffusion term
+// Pressure dependent diffusion term
 volVectorField mdp
 (
     IOobject
