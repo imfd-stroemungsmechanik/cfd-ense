@@ -11,10 +11,14 @@ fvVectorMatrix UEqn
 // Calculate grad p coupling matrix. VV, 9/June/2014
 BlockLduSystem<vector, vector> pInU(fvm::grad(p));
 
+surfaceScalarField U0f = fvc::interpolate(U.component(0));
+surfaceScalarField U1f = fvc::interpolate(U.component(1));
+surfaceScalarField U2f = fvc::interpolate(U.component(2));
+
 // div(phi, U) - p coupling
-fvScalarMatrix pInU0(fvm::div(phiPsi*fvc::interpolate(U.component(0)), p));
-fvScalarMatrix pInU1(fvm::div(phiPsi*fvc::interpolate(U.component(1)), p));
-fvScalarMatrix pInU2(fvm::div(phiPsi*fvc::interpolate(U.component(2)), p));
+fvScalarMatrix pInU0(fvm::div(phiPsi*U0f, p));
+fvScalarMatrix pInU1(fvm::div(phiPsi*U1f, p));
+fvScalarMatrix pInU2(fvm::div(phiPsi*U2f, p));
 UEqn -= fvc::div(phi, U);
 
 
@@ -27,26 +31,17 @@ UEqn +=
 );
 
 // div(phimd, U) - p and e coupling
-pInU0 += fvm::laplacian(nmuByp*fvc::interpolate(U.component(0)), p);
-pInU1 += fvm::laplacian(nmuByp*fvc::interpolate(U.component(1)), p);
-pInU2 += fvm::laplacian(nmuByp*fvc::interpolate(U.component(2)), p);
-fvScalarMatrix EInU0(constrainmdT(fvm::laplacian(muBy2e*fvc::interpolate(U.component(0)), thermo.e())));
-fvScalarMatrix EInU1(constrainmdT(fvm::laplacian(muBy2e*fvc::interpolate(U.component(1)), thermo.e())));
-fvScalarMatrix EInU2(constrainmdT(fvm::laplacian(muBy2e*fvc::interpolate(U.component(2)), thermo.e())));
+pInU0 += fvm::laplacian(nmuByp*U0f, p);
+pInU1 += fvm::laplacian(nmuByp*U1f, p);
+pInU2 += fvm::laplacian(nmuByp*U2f, p);
+fvScalarMatrix EInU0(constrainmdT(fvm::laplacian(muBy2e*U0f, thermo.e())));
+fvScalarMatrix EInU1(constrainmdT(fvm::laplacian(muBy2e*U1f, thermo.e())));
+fvScalarMatrix EInU2(constrainmdT(fvm::laplacian(muBy2e*U2f, thermo.e())));
 UpEEqn.insertEquationCoupling(0, 4, EInU0);
 UpEEqn.insertEquationCoupling(1, 4, EInU1);
 UpEEqn.insertEquationCoupling(2, 4, EInU2);
 UEqn -= fvc::div(phimd, U);
 
-
-volScalarField rAU = 1.0/UEqn.A();
-
-if (gMin(rAU) < 0)
-{
-    WarningIn(args.executable())
-        << "Negative rAU detected.  Check mesh and discretisation"
-        << endl;
-}
 
 // Under-relax momentum. Note this will destroy the H and A
 UEqn.relax();

@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 
         // p.storePrevIter();
 
-        // Initialize the Up block system (matrix, source and reference to Up)
+        // Initialize the UpE block system (matrix, source and reference to UpE)
         fvBlockMatrixFix<vector5> UpEEqn(UpE);
 
         const volScalarField K("K", 0.5*magSqr(U));
